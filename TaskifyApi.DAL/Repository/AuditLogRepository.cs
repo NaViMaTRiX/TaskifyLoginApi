@@ -7,9 +7,13 @@ namespace TaskifyApi.DAL.Repository;
 
 public class AuditLogRepository(AppDbContext context) : IAuditLogRepository
 {
-    public async Task<List<AuditLogs>> GetAllAsync(CancellationToken token)
+    public async Task<List<AuditLogs>> GetAllAsync(int page, int pageSize, CancellationToken token)
     {
-        return await context.AuditLog.AsNoTracking().ToListAsync(token);
+        return await context.AuditLog
+            .AsNoTracking()
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
     }
 
     public async Task<AuditLogs?> GetByIdAsync(Guid id, CancellationToken token)
