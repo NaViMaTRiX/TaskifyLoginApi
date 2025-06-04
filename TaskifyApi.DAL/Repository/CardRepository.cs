@@ -7,9 +7,13 @@ namespace TaskifyApi.DAL.Repository;
 
 public class CardRepository(AppDbContext context) : ICardRepository
 {
-    public async Task<List<Cards>> GetAllAsync(CancellationToken token)
+    public async Task<List<Cards>> GetAllAsync(int page, int pageSize, CancellationToken token)
     {
-        return await context.Card.AsNoTracking().ToListAsync(token);
+        return await context.Card
+            .AsNoTracking()
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
     }
 
     public async Task<Cards?> GetByIdAsync(Guid id, CancellationToken token)

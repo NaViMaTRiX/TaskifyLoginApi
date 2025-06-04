@@ -4,7 +4,7 @@ namespace TaskifyApi.Domain.Interface;
 
 public interface IOrgLimitRepository
 {
-    Task<List<OrgLimits>> GetAllAsync(CancellationToken token);
+    Task<List<OrgLimits>> GetAllAsync(int page, int pageSize, CancellationToken token);
     Task<OrgLimits?> GetByIdAsync(Guid id, CancellationToken token);
     Task<OrgLimits?> CreateAsync(OrgLimits listModel, CancellationToken token); 
     Task<OrgLimits?> UpdateAsync(Guid id, OrgLimits listModel, CancellationToken token);

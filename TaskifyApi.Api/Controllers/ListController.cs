@@ -11,12 +11,12 @@ public class ListController(IListRepository listRepository, IBoardRepository boa
     : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken token)
+    public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var lists = await listRepository.GetAllAsync(token); 
+        var lists = await listRepository.GetAllAsync(page, pageSize, token);
         var result = lists.Select(x => x.ToListDto());
         return Ok(result);
     }

@@ -12,12 +12,12 @@ public class CardController(ICardRepository cardRepository, IListRepository list
     : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken token)
+    public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
-        var cards = await cardRepository.GetAllAsync(token);
+
+        var cards = await cardRepository.GetAllAsync(page, pageSize, token);
         var result = cards.Select(x => x.ToCardDto());
         return Ok(result);
     }

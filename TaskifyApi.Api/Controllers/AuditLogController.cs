@@ -10,12 +10,12 @@ namespace TaskifyApi.Api.Controllers;
 public class AuditLogController(IAuditLogRepository auditLogRepository) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken token)
+    public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var auditLogs = await auditLogRepository.GetAllAsync(token);
+        var auditLogs = await auditLogRepository.GetAllAsync(page, pageSize, token);
         var result = auditLogs.Select(x => x.ToAuditLogDto());
         return Ok(result);
     }
