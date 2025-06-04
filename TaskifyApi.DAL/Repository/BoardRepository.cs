@@ -35,10 +35,13 @@ public class BoardRepository(AppDbContext context) : IBoardRepository
 
     public async Task<Boards?> CreateAsync(string orgId, Boards boardModel, CancellationToken token)
     {
-        var objOrgId = await context.Board.SingleOrDefaultAsync(x => x.OrgId == orgId, token);
-        if (objOrgId is null)
+        // Ensure the organization exists before creating a board
+        var orgExists = await context.Organization
+            .AnyAsync(x => x.Id.ToString() == orgId, token);
+
+        if (!orgExists)
             return null;
-        
+
         await context.Board.AddAsync(boardModel, token);
         await context.SaveChangesAsync(token);
         return boardModel;
