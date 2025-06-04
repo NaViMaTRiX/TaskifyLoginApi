@@ -8,9 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 public class OrgSubscriptionRepository(AppDbContext context) : IOrgSubscriptionRepository
 {
-    public async Task<List<OrgSubscriptions>> GetAllAsync(CancellationToken token)
+    public async Task<List<OrgSubscriptions>> GetAllAsync(int page, int pageSize, CancellationToken token)
     {
-        return await context.OrgSubscription.AsNoTracking().ToListAsync(token);
+        return await context.OrgSubscription
+            .AsNoTracking()
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
     }
 
     public async Task<OrgSubscriptions?> GetByIdAsync(Guid id, CancellationToken token)

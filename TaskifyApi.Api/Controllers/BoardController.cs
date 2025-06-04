@@ -11,12 +11,12 @@ namespace TaskifyApi.Api.Controllers;
 public class BoardController(IBoardRepository boardRepository) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken token)
+    public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var boards = await boardRepository.GetAllAsync(token);
+        var boards = await boardRepository.GetAllAsync(page, pageSize, token);
         var result = boards.Select(b => b.ToBoardDto());
         return Ok(result);
     }

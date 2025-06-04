@@ -4,7 +4,7 @@ namespace TaskifyApi.Domain.Interface;
 
 public interface IBoardRepository
 {
-    Task<List<Boards>> GetAllAsync(CancellationToken token);
+    Task<List<Boards>> GetAllAsync(int page, int pageSize, CancellationToken token);
     Task<Boards?> GetByIdAsync(Guid id, CancellationToken token);
     Task<Boards?> GetAllByOrgIdAsync(string orgId, CancellationToken token);
     Task<Boards?> CreateAsync(string orgId, Boards boardModel, CancellationToken token);

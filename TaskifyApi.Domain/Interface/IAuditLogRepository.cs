@@ -4,7 +4,7 @@ namespace TaskifyApi.Domain.Interface;
 
 public interface IAuditLogRepository
 {
-    Task<List<AuditLogs>> GetAllAsync(CancellationToken token); // TODO: Add pagination
+    Task<List<AuditLogs>> GetAllAsync(int page, int pageSize, CancellationToken token); // TODO: Add pagination
     Task<AuditLogs?> GetByIdAsync(Guid id, CancellationToken token);
     Task<AuditLogs?> CreateAsync(AuditLogs boardsModel, CancellationToken token);
     Task<AuditLogs?> DeleteAsync(Guid id, CancellationToken token);

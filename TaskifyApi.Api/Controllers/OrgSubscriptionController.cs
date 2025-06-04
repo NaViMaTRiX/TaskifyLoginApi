@@ -18,12 +18,12 @@ public class OrgSubscriptionController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken token)
+    public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-        
-        var orgSubscriptions = await _orgSubscriptionRepository.GetAllAsync(token);
+
+        var orgSubscriptions = await _orgSubscriptionRepository.GetAllAsync(page, pageSize, token);
         var result = orgSubscriptions.Select(x => x.ToOrgSubscriptionDto());
         return Ok(orgSubscriptions);
     }

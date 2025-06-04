@@ -4,7 +4,7 @@ namespace TaskifyApi.Domain.Interface;
 
 public interface IListRepository
 {
-    Task<List<Lists>> GetAllAsync(CancellationToken token);
+    Task<List<Lists>> GetAllAsync(int page, int pageSize, CancellationToken token);
     Task<Lists?> GetByIdAsync(Guid id, CancellationToken token);
     Task<Lists?> CreateAsync(Lists listModel, CancellationToken token); // TODO: Второго параметра нет? Почему?
     Task<Lists?> UpdateAsync(Guid id, Lists listModel, CancellationToken token);

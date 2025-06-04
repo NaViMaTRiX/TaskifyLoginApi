@@ -4,7 +4,7 @@ namespace TaskifyApi.Domain.Interface;
 
 public interface IOrgSubscriptionRepository
 {
-    Task<List<OrgSubscriptions>> GetAllAsync(CancellationToken token);
+    Task<List<OrgSubscriptions>> GetAllAsync(int page, int pageSize, CancellationToken token);
     Task<OrgSubscriptions?> GetByIdAsync(Guid id, CancellationToken token);
     Task<OrgSubscriptions?> CreateAsync(OrgSubscriptions listModel, CancellationToken token); 
     Task<OrgSubscriptions?> DeleteAsync(Guid id, CancellationToken token);

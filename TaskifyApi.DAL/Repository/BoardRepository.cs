@@ -8,11 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 public class BoardRepository(AppDbContext context) : IBoardRepository
 {
-    public async Task<List<Boards>> GetAllAsync(CancellationToken token)
+    public async Task<List<Boards>> GetAllAsync(int page, int pageSize, CancellationToken token)
     {
         return await context.Board
             .AsNoTracking()
-            .Include(x => x.Lists).ToListAsync(token);;
+            .Include(x => x.Lists)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
     }
 
     public async Task<Boards?> GetByIdAsync(Guid id, CancellationToken token)

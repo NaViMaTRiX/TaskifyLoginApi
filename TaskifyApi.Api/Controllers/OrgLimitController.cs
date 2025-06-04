@@ -17,12 +17,13 @@ public class OrgLimitController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll(CancellationToken token)
+    public async Task<IActionResult> GetAll([FromQuery] int page, [FromQuery] int pageSize, CancellationToken token)
     {
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
-        
-        var orgLimits = await _orgLimitRepository.GetAllAsync(token);                                 
+
+        var orgLimits = await _orgLimitRepository.GetAllAsync(page, pageSize, token);
+
         var result = orgLimits.Select(x => x.ToOrgLimitDto());
         return Ok(result);
     }

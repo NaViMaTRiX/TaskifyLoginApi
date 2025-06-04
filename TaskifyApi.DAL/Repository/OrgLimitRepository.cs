@@ -7,9 +7,13 @@ namespace TaskifyApi.DAL.Repository;
 
 public class OrgLimitRepository(AppDbContext context) : IOrgLimitRepository
 {
-    public async Task<List<OrgLimits>> GetAllAsync(CancellationToken token)
+    public async Task<List<OrgLimits>> GetAllAsync(int page, int pageSize, CancellationToken token)
     {
-        return await context.OrgLimit.AsNoTracking().ToListAsync(token);
+        return await context.OrgLimit
+            .AsNoTracking()
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(token);
     }
 
     public async Task<OrgLimits?> GetByIdAsync(Guid id, CancellationToken token)
