@@ -1,6 +1,5 @@
 ﻿using TaskifyApi.Domain.Dtos.OrgSubscription;
 using TaskifyApi.Domain.Models;
-using WebApiTaskify.Dtos.OrgSubscription;
 
 namespace TaskifyApi.Application.Mappers;
 

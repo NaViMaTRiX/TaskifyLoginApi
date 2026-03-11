@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using TaskifyApi.Application.Mappers;
 using TaskifyApi.Domain.Dtos.Card;
 using TaskifyApi.Domain.Interface;
-using WebApiTaskify.Dtos.Card;
 
 namespace TaskifyApi.Api.Controllers;
 
 [ApiController]
 [Route("api/v{version:apiVersion}/card")]
-public class CardController(ICardRepository cardRepository, IListRepository listRepository)
+public class CardController(ICardRepository cardRepository, IValidator<CreateCardDto> validator)
     : ControllerBase
 {
     [HttpGet]
@@ -18,6 +18,28 @@ public class CardController(ICardRepository cardRepository, IListRepository list
             return BadRequest(ModelState);
         
         var cards = await cardRepository.GetAllAsync(token);
+        var result = cards.Select(x => x.ToCardDto());
+        return Ok(result);
+    }
+    
+    [HttpGet("board/{boardId:guid}")]
+    public async Task<IActionResult> GetAllByBoardAsync(Guid boardId, CancellationToken token)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        var cards = await cardRepository.GetAllByBoardAsync(boardId, token);
+        var result = cards.Select(x => x.ToCardDto());
+        return Ok(result);
+    }
+    
+    [HttpGet("list/{listId:guid}")]
+    public async Task<IActionResult> GetAllByListAsync(Guid listId, CancellationToken token)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        var cards = await cardRepository.GetAllByListAsync(listId, token);
         var result = cards.Select(x => x.ToCardDto());
         return Ok(result);
     }
@@ -41,11 +63,12 @@ public class CardController(ICardRepository cardRepository, IListRepository list
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        if(!await listRepository.ExistAsync(listId, token))
-            return BadRequest("List not found");
+        var validationResult = await validator.ValidateAsync(createCardDto, token);
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
         
         var cardModel = createCardDto.ToCardFromCreate(listId);
-        var card = await cardRepository.CreateAsync(cardModel, token);
+        var card = await cardRepository.CreateAsync(cardModel, listId, token);
         
         if (card is null)
             return BadRequest("Failed to create card");

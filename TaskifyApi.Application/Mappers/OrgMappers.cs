@@ -1,4 +1,5 @@
-﻿using TaskifyApi.Domain.Models;
+﻿using TaskifyApi.Domain.Dtos.OrgLimit;
+using TaskifyApi.Domain.Models;
 using WebApiTaskify.Dtos.OrgLimit;
 
 namespace TaskifyApi.Application.Mappers;

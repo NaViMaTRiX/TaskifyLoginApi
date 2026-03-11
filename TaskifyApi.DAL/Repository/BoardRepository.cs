@@ -10,9 +10,14 @@ public class BoardRepository(AppDbContext context) : IBoardRepository
 {
     public async Task<List<Boards>> GetAllAsync(CancellationToken token)
     {
-        return await context.Board
+        var boards = await context.Board
             .AsNoTracking()
             .Include(x => x.Lists).ToListAsync(token);;
+        
+        if (boards is null)
+            throw new ArgumentException($"{nameof(boards)} does not exist, ID : {boards}");
+        
+        return boards;
     }
 
     public async Task<Boards?> GetByIdAsync(Guid id, CancellationToken token)
@@ -23,21 +28,33 @@ public class BoardRepository(AppDbContext context) : IBoardRepository
             .FirstOrDefaultAsync(x => x.Id == id, token);
          
          if (board is null)
-             return null;
+             throw new ArgumentException($"{nameof(board)} does not exist, ID : {board}");
          
          return board;
     }
 
-    public Task<Boards?> GetAllByOrgIdAsync(string orgId, CancellationToken token)
+    public async Task<List<Boards>> GetAllByOrgIdAsync(string orgId, CancellationToken token)
     {
-        throw new NotImplementedException();
+        if (!await context.Board.AnyAsync(x => x.OrgId == orgId, token))
+            throw new ArgumentNullException($"Does not exist, ID : {orgId}");
+        
+        var boards = await context.Board
+            .AsNoTracking()
+            .Where(x => x.OrgId == orgId)
+            .ToListAsync(token);;
+        
+        if (boards is null)
+            throw new ArgumentNullException($"{nameof(boards)} does not exist, ID : {boards}");
+        
+        return boards;
     }
 
     public async Task<Boards?> CreateAsync(string orgId, Boards boardModel, CancellationToken token)
     {
         var objOrgId = await context.Board.SingleOrDefaultAsync(x => x.OrgId == orgId, token);
+        
         if (objOrgId is null)
-            return null;
+            throw new ArgumentException($"{nameof(objOrgId)} does not exist, ID : {objOrgId}");
         
         await context.Board.AddAsync(boardModel, token);
         await context.SaveChangesAsync(token);
@@ -69,7 +86,7 @@ public class BoardRepository(AppDbContext context) : IBoardRepository
         var board = await GetByIdAsync(id, token);
         
         if (board is null)
-            return null;
+            throw new ArgumentException($"{nameof(board)} does not exist, ID : {id}");
         
         context.Board.Remove(board);
         await context.SaveChangesAsync(token);

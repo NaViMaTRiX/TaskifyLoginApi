@@ -1,6 +1,4 @@
-﻿namespace WebApiTaskify.Dtos.List;
-
-using System.ComponentModel.DataAnnotations;
+﻿namespace TaskifyApi.Domain.Dtos.List;
 
 public class CreateListDto
 {

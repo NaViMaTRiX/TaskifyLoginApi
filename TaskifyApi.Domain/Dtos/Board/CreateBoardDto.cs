@@ -1,13 +1,11 @@
-﻿namespace WebApiTaskify.Dtos.Board;
-
-using System.ComponentModel.DataAnnotations;
+﻿namespace TaskifyApi.Domain.Dtos.Board;
 
 public record CreateBoardDto
 {
-    public string Title { get; set; }
-    public string ImageId { get; set; }
-    public string ImageFullUrl { get; set; }
-    public string ImageThumbUrl { get; set; }
-    public string ImageUserName { get; set; }
-    public string ImageLinkHtml { get; set; }
+    public string Title { get; init; }
+    public string ImageId { get; init; }
+    public string ImageFullUrl { get; init; }
+    public string ImageThumbUrl { get; init; }
+    public string ImageUserName { get; init; }
+    public string ImageLinkHtml { get; init; }
 }

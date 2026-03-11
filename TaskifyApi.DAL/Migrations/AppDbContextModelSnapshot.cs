@@ -17,21 +17,23 @@ namespace WebApiTaskify.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("ProductVersion", "8.0.17")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "action", "action", new[] { "delete", "update", "create" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "action", "action", new[] { "update", "create", "delete" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "entity_type", "entity_type", new[] { "board", "list", "card" });
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("WebApiTaskify.Models.AuditLogs", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.AuditLogs", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
-                    b.Property<int?>("Action")
-                        .HasColumnType("action");
+                    b.Property<string>("Action")
+                        .HasColumnType("text")
+                        .HasColumnName("action");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp with time zone")
@@ -51,8 +53,8 @@ namespace WebApiTaskify.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("entity_title");
 
-                    b.Property<int?>("EntityType")
-                        .HasColumnType("entity_type")
+                    b.Property<string>("EntityType")
+                        .HasColumnType("text")
                         .HasColumnName("entity_type");
 
                     b.Property<DateTime?>("LastModifyTime")
@@ -84,16 +86,17 @@ namespace WebApiTaskify.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("user_name");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("audit_logs", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Boards", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Boards", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp with time zone")
@@ -144,18 +147,24 @@ namespace WebApiTaskify.Migrations
 
                     b.Property<string>("Title")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("title");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("boards", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Cards", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Cards", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool?>("Completed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("completed");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp with time zone")
@@ -165,9 +174,10 @@ namespace WebApiTaskify.Migrations
                         .HasColumnType("text")
                         .HasColumnName("created_user");
 
-                    b.Property<string>("description")
+                    b.Property<string>("Description")
                         .HasMaxLength(3000)
-                        .HasColumnType("character varying(3000)");
+                        .HasColumnType("character varying(3000)")
+                        .HasColumnName("description");
 
                     b.Property<DateTime?>("LastModifyTime")
                         .IsRequired()
@@ -182,39 +192,40 @@ namespace WebApiTaskify.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("list_id");
 
-                    b.Property<int?>("Order")
-                        .HasColumnType("integer");
+                    b.Property<int?>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
 
-                    b.Property<bool?>("ready")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("timeEnd")
+                    b.Property<DateTime?>("TimeEnd")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("time_end");
 
-                    b.Property<DateTime?>("timeStart")
+                    b.Property<DateTime?>("TimeStart")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("time_start");
 
-                    b.Property<bool?>("timer")
-                        .HasColumnType("boolean");
+                    b.Property<bool?>("Timer")
+                        .HasColumnType("boolean")
+                        .HasColumnName("timer");
 
                     b.Property<string>("Title")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("title");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.HasIndex("ListId");
 
                     b.ToTable("cards", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Lists", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Lists", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<Guid?>("BoardId")
                         .HasColumnType("uuid")
@@ -238,26 +249,29 @@ namespace WebApiTaskify.Migrations
                         .HasColumnName("last_modify_user");
 
                     b.Property<int?>("Order")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
 
                     b.Property<string>("Title")
                         .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("title");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.HasIndex("BoardId");
 
                     b.ToTable("lists", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.OrgLimits", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.OrgLimits", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
-                    b.Property<int?>("count")
+                    b.Property<int?>("Count")
                         .HasColumnType("integer")
                         .HasColumnName("count");
 
@@ -283,35 +297,17 @@ namespace WebApiTaskify.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("org_id");
 
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("org_limits", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.OrgSubscriptions", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.OrgSubscriptions", b =>
                 {
-                    b.Property<Guid>("id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("StripeCurrentPeriodEnd")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("stripe_current_period_end");
-
-                    b.Property<string>("StripeCustomerId")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
-                        .HasColumnName("stripe_customer_id");
-
-                    b.Property<string>("StripePriceId")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
-                        .HasColumnName("stripe_price_id");
-
-                    b.Property<string>("StripeSubscriptionId")
-                        .HasMaxLength(300)
-                        .HasColumnType("character varying(300)")
-                        .HasColumnName("stripe_subscription_id");
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
 
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("timestamp with time zone")
@@ -335,22 +331,48 @@ namespace WebApiTaskify.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("org_id");
 
-                    b.HasKey("id");
+                    b.Property<DateTime?>("StripeCurrentPeriodEnd")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("stripe_current_period_end");
+
+                    b.Property<string>("StripeCustomerId")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("stripe_customer_id");
+
+                    b.Property<string>("StripePriceId")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("stripe_price_id");
+
+                    b.Property<string>("StripeSubscriptionId")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("stripe_subscription_id");
+
+                    b.HasKey("Id");
 
                     b.ToTable("org_subscriptions", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Organizations", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Organizations", b =>
                 {
-                    b.Property<Guid>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                    b.Property<string>("Id")
+                        .HasColumnType("text")
                         .HasColumnName("id");
 
                     b.Property<string>("Address")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)")
                         .HasColumnName("address");
+
+                    b.Property<DateTime>("CreatedTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_time");
+
+                    b.Property<string>("CreatedUser")
+                        .HasColumnType("text")
+                        .HasColumnName("created_user");
 
                     b.Property<string>("Description")
                         .HasMaxLength(900)
@@ -361,6 +383,15 @@ namespace WebApiTaskify.Migrations
                         .HasMaxLength(75)
                         .HasColumnType("character varying(75)")
                         .HasColumnName("email");
+
+                    b.Property<DateTime?>("LastModifyTime")
+                        .IsRequired()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_modify_time");
+
+                    b.Property<string>("LastModifyUser")
+                        .HasColumnType("text")
+                        .HasColumnName("last_modify_user");
 
                     b.Property<string>("Logo")
                         .HasMaxLength(100)
@@ -386,31 +417,14 @@ namespace WebApiTaskify.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("website");
 
-                    b.Property<DateTime>("CreatedTime")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_time");
-
-                    b.Property<string>("CreatedUser")
-                        .HasColumnType("text")
-                        .HasColumnName("created_user");
-
-                    b.Property<DateTime?>("LastModifyTime")
-                        .IsRequired()
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("last_modify_time");
-
-                    b.Property<string>("LastModifyUser")
-                        .HasColumnType("text")
-                        .HasColumnName("last_modify_user");
-
-                    b.HasKey("id");
+                    b.HasKey("Id");
 
                     b.ToTable("organizations", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Cards", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Cards", b =>
                 {
-                    b.HasOne("WebApiTaskify.Models.Lists", "List")
+                    b.HasOne("TaskifyApi.Domain.Models.Lists", "List")
                         .WithMany("Cards")
                         .HasForeignKey("ListId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -418,9 +432,9 @@ namespace WebApiTaskify.Migrations
                     b.Navigation("List");
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Lists", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Lists", b =>
                 {
-                    b.HasOne("WebApiTaskify.Models.Boards", "Board")
+                    b.HasOne("TaskifyApi.Domain.Models.Boards", "Board")
                         .WithMany("Lists")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -428,12 +442,12 @@ namespace WebApiTaskify.Migrations
                     b.Navigation("Board");
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Boards", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Boards", b =>
                 {
                     b.Navigation("Lists");
                 });
 
-            modelBuilder.Entity("WebApiTaskify.Models.Lists", b =>
+            modelBuilder.Entity("TaskifyApi.Domain.Models.Lists", b =>
                 {
                     b.Navigation("Cards");
                 });

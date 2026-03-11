@@ -1,6 +1,5 @@
 ﻿using TaskifyApi.Domain.Dtos.Card;
 using TaskifyApi.Domain.Models.Libs;
-using WebApiTaskify.Dtos.Card;
 
 namespace TaskifyApi.Domain.Dtos.List;
 

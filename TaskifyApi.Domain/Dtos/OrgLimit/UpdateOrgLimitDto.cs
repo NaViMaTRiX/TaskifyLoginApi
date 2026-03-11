@@ -1,8 +1,6 @@
-﻿namespace WebApiTaskify.Dtos.OrgLimit;
+﻿namespace TaskifyApi.Domain.Dtos.OrgLimit;
 
-using System.ComponentModel.DataAnnotations;
-
-public class UpdateOrgLimitDto
+public record UpdateOrgLimitDto
 {
-    public int Limit { get; set; } = 0;
+    public int Limit { get; init; }
 }

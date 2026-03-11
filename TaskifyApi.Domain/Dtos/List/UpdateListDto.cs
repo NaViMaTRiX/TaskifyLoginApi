@@ -1,9 +1,7 @@
-﻿namespace WebApiTaskify.Dtos.List;
+﻿namespace TaskifyApi.Domain.Dtos.List;
 
-using System.ComponentModel.DataAnnotations;
-
-public class UpdateListDto
+public record UpdateListDto
 {
-    public string Title { get; set; }
-    public int Order { get; set; }
+    public string Title { get; init; }
+    public int Order { get; init; }
 }

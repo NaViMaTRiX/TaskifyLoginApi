@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using TaskifyApi.Domain.Dtos.Board;
 using TaskifyApi.Domain.Interface;
 using TaskifyApi.Application.Mappers;
-using WebApiTaskify.Dtos.Board;
 
 namespace TaskifyApi.Api.Controllers;
 
@@ -32,6 +31,17 @@ public class BoardController(IBoardRepository boardRepository) : ControllerBase
             return NotFound("Board not found");
         
         return Ok(board.ToBoardDto());
+    }
+    
+    [HttpGet("{orgId}")]
+    public async Task<IActionResult> GetAllByOrgIdAsync(string orgId, CancellationToken token)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var boards = await boardRepository.GetAllByOrgIdAsync(orgId, token);
+        var result = boards.Select(b => b.ToBoardWithoutListsDto());
+        return Ok(result);
     }
 
     [HttpPost]

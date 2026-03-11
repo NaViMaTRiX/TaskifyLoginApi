@@ -10,14 +10,23 @@ public class OrgSubscriptionRepository(AppDbContext context) : IOrgSubscriptionR
 {
     public async Task<List<OrgSubscriptions>> GetAllAsync(CancellationToken token)
     {
-        return await context.OrgSubscription.AsNoTracking().ToListAsync(token);
+        var subs = await context.OrgSubscription.AsNoTracking().ToListAsync(token);
+        
+        if (subs is null)
+            throw new ArgumentNullException($"{nameof(subs)} does not exist");
+        
+        return subs;
     }
 
     public async Task<OrgSubscriptions?> GetByIdAsync(Guid id, CancellationToken token)
     {
-        return await context.OrgSubscription
+        var sub = await context.OrgSubscription
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id, token);
+        
+        if (sub is null)
+            throw new ArgumentNullException($"{nameof(sub)} does not exist, id: {id}");
+        return sub;
     }
 
     public async Task<OrgSubscriptions?> CreateAsync(OrgSubscriptions listModel, CancellationToken token)
@@ -29,14 +38,15 @@ public class OrgSubscriptionRepository(AppDbContext context) : IOrgSubscriptionR
 
     public async Task<OrgSubscriptions?> DeleteAsync(Guid id, CancellationToken token)
     {
-        var listModel = await GetByIdAsync(id, token);
-
-        if (listModel is null)
-            return null;
+        var sub = await context.OrgSubscription
+            .SingleOrDefaultAsync(x => x.Id == id, token);
         
-        context.OrgSubscription.Remove(listModel);
+        if (sub is null)
+            throw new ArgumentNullException($"{nameof(sub)} does not exist, id: {id}");
+        
+        context.OrgSubscription.Remove(sub);
         await context.SaveChangesAsync(token);
-        return listModel;
+        return sub;
     }
 
     public async Task<bool> ExistAsync(Guid id, CancellationToken token)

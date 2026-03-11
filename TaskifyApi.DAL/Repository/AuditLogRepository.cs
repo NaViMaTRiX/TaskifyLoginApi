@@ -9,14 +9,36 @@ public class AuditLogRepository(AppDbContext context) : IAuditLogRepository
 {
     public async Task<List<AuditLogs>> GetAllAsync(CancellationToken token)
     {
-        return await context.AuditLog.AsNoTracking().ToListAsync(token);
+        var lists = await context.AuditLog.AsNoTracking().ToListAsync(token);
+        
+        if (lists is null)
+            throw new ArgumentNullException($"{nameof(lists)} does not exist");
+        
+        return lists;
+    }
+
+    public async Task<List<AuditLogs>> GetAllByUserAsync(string userId, CancellationToken token)
+    {
+        //TODO: Implement check for user by api
+        
+        var logs = await context.AuditLog.Where(x => x.UserId == userId).AsNoTracking().ToListAsync(token);
+        
+        if (logs is null)
+            throw new ArgumentNullException($"{nameof(logs)} does not exist");
+        
+        return logs;
     }
 
     public async Task<AuditLogs?> GetByIdAsync(Guid id, CancellationToken token)
     {
-        return await context.AuditLog
+        var auditLogs = await context.AuditLog
             .AsNoTracking()
             .SingleOrDefaultAsync(x => x.Id == id, token);
+        
+        if (auditLogs is null)
+            throw new ArgumentNullException($"{nameof(auditLogs)} does not exist");
+        
+        return auditLogs;
     }
 
     public async Task<AuditLogs?> CreateAsync(AuditLogs boardsModel, CancellationToken token)
@@ -30,7 +52,7 @@ public class AuditLogRepository(AppDbContext context) : IAuditLogRepository
     {
         var audit = await context.AuditLog.SingleOrDefaultAsync(x => x.Id == id, token);
         if (audit is null)
-            return null;
+            throw new ArgumentNullException($"{nameof(audit)} does not exist");
         
         context.AuditLog.Remove(audit);
         await context.SaveChangesAsync(token);
@@ -39,6 +61,8 @@ public class AuditLogRepository(AppDbContext context) : IAuditLogRepository
 
     public async Task<bool> ExistAsync(Guid id, CancellationToken token)
     {
-        return await context.AuditLog.AnyAsync(x => x.Id == id, token);
+        var exist = await context.AuditLog.AnyAsync(x => x.Id == id, token);
+        
+        return exist;
     }
 }

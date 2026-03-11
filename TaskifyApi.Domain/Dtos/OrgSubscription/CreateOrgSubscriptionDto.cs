@@ -1,10 +1,8 @@
-﻿namespace WebApiTaskify.Dtos.OrgSubscription;
+﻿namespace TaskifyApi.Domain.Dtos.OrgSubscription;
 
-using System.ComponentModel.DataAnnotations;
-
-public class CreateOrgSubscriptionDto
+public record CreateOrgSubscriptionDto
 {
-    public string StripeCustomerId { get; set; }
-    public string StripeSubscriptionId { get; set; }
-    public string StripePriseId { get; set; } // это пока не подключил Юкассу
+    public string StripeCustomerId { get; init; }
+    public string StripeSubscriptionId { get; init; }
+    public string StripePriseId { get; init; } // это пока не подключил Юкассу
 }

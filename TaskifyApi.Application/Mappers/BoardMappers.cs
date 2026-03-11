@@ -1,5 +1,3 @@
-using WebApiTaskify.Dtos.Board;
-
 namespace TaskifyApi.Application.Mappers;
 
 using Domain.Dtos.Board;
@@ -52,6 +50,24 @@ public static class BoardMappers
             ImageUserName = updateBoardModel.ImageUserName,
             ImageThumbUrl = updateBoardModel.ImageThumbUrl,
             ImageLinkHTML = updateBoardModel.ImageLinkHtml,
+        };
+    }
+    
+    public static BoardDto ToBoardWithoutListsDto(this Boards boardModel) // изпользуется для вывода данных на страницу без списков
+    {
+        return new BoardDto
+        {
+            Id = boardModel.Id,
+            OrgId = boardModel.OrgId,
+            Title = boardModel.Title,
+            ImageId = boardModel.ImageId,
+            ImageFullUrl = boardModel.ImageFullUrl,
+            ImageThumbUrl = boardModel.ImageThumbUrl,
+            ImageLinkHtml = boardModel.ImageLinkHTML,
+            CreatedTime = boardModel.CreatedTime,
+            LastModifyTime = boardModel.LastModifyTime,
+            LastModifyUser = boardModel.LastModifyUser,
+            CreatedUser = boardModel.CreatedUser,
         };
     }
 }

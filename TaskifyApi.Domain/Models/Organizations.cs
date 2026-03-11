@@ -4,7 +4,7 @@ namespace TaskifyApi.Domain.Models;
 
 public class Organizations : BaseModel
 {
-    public Guid Id { get; set; }
+    public string Id { get; init; }
     public string Name { get; set; }
     public string? Description{ get; set; }
     public string Logo{ get; set; }

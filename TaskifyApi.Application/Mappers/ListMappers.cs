@@ -1,6 +1,5 @@
 ﻿using TaskifyApi.Domain.Dtos.List;
 using TaskifyApi.Domain.Models;
-using WebApiTaskify.Dtos.List;
 
 namespace TaskifyApi.Application.Mappers;
 
@@ -46,6 +45,8 @@ public static class ListMappers
             BoardId = boardId,
             Title = createListModel.Title,
             Order = createListModel.Order,
+            CreatedTime = DateTime.UtcNow,
+            LastModifyTime = DateTime.UtcNow
         };
     }
 
@@ -55,6 +56,22 @@ public static class ListMappers
         {
             Title = updateListModel.Title,
             Order = updateListModel.Order,
+            LastModifyTime = DateTime.UtcNow
+        };
+    }
+    
+    public static ListDto ToListWithoutCardDto(this Lists listModel) // изпользуется для вывода данных на страницу
+    {
+        return new ListDto
+        {
+            Id = listModel.Id,
+            BoardId = listModel.BoardId,
+            Title = listModel.Title!,
+            Order = listModel.Order,
+            CreatedTime = listModel.CreatedTime,
+            LastModifyTime = listModel.LastModifyTime,
+            CreatedUser = listModel.CreatedUser,
+            LastModifyUser = listModel.LastModifyUser,
         };
     }
 }

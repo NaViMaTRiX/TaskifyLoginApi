@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskifyApi.Application.Mappers;
+using TaskifyApi.Domain.Dtos.List;
 using TaskifyApi.Domain.Interface;
-using WebApiTaskify.Dtos.List;
 
 namespace TaskifyApi.Api.Controllers;
 
@@ -18,6 +18,17 @@ public class ListController(IListRepository listRepository, IBoardRepository boa
 
         var lists = await listRepository.GetAllAsync(token); 
         var result = lists.Select(x => x.ToListDto());
+        return Ok(result);
+    }
+    
+    [HttpGet("board/{boardId:guid}")]
+    public async Task<IActionResult> GetAllByBoard(Guid boardId, CancellationToken token)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var lists = await listRepository.GetAllByBoardAsync(boardId, token); 
+        var result = lists.Select(x => x.ToListWithoutCardDto());
         return Ok(result);
     }
 

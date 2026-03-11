@@ -1,6 +1,5 @@
 ﻿using TaskifyApi.Domain.Dtos.Card;
 using TaskifyApi.Domain.Models;
-using WebApiTaskify.Dtos.Card;
 
 namespace TaskifyApi.Application.Mappers;
 
@@ -14,8 +13,8 @@ public static class CardMappers
             ListId = cardDto.ListId,
             Title = cardDto.Title,
             Description = cardDto.Description,
-            Order = cardDto.Order,
-            ReadyChecked = cardDto.Ready,
+            Order = cardDto.Position,
+            ReadyChecked = cardDto.Completed,
             TimeStart = cardDto.TimeStart,
             TimeEnd = cardDto.TimeEnd,
             TimeChecked = cardDto.Timer,
@@ -34,9 +33,9 @@ public static class CardMappers
             ListId = listId,
             Title = createCardDto.Title,
             Description = createCardDto.Description,
-            Order = createCardDto.Order,
+            Position = createCardDto.Order,
             Timer = createCardDto.TimeChecked,
-            Ready = createCardDto.ReadyChecked,
+            Completed = createCardDto.ReadyChecked,
             TimeStart = createCardDto.TimeStart,
             TimeEnd = createCardDto.TimeEnd,
         };
@@ -48,11 +47,12 @@ public static class CardMappers
         {
             Title = updateCardDto.Title,
             Description = updateCardDto.Description,
-            Order = updateCardDto.Order,
-            Ready = updateCardDto.ReadyChecked,
+            Position = updateCardDto.Order,
+            Completed = updateCardDto.ReadyChecked,
             Timer = updateCardDto.TimeChecked,
             TimeStart = updateCardDto.TimeStart,
             TimeEnd = updateCardDto.TimeEnd,
+            LastModifyTime = DateTime.UtcNow,
         };
     }
 }

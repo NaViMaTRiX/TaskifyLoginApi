@@ -1,28 +1,21 @@
-﻿using TaskifyApi.Application.Mappers;
+﻿using Microsoft.AspNetCore.Mvc;
+using TaskifyApi.Application.Mappers;
+using TaskifyApi.Domain.Dtos.OrgLimit;
 using TaskifyApi.Domain.Interface;
 
-namespace WebApiTaskify.Controllers;
-
-using Dtos.OrgLimit;
-using Microsoft.AspNetCore.Mvc;
+namespace TaskifyApi.Api.Controllers;
 
 [Route("api/v{version:apiVersion}/orglimit")]
 [ApiController]
-public class OrgLimitController : ControllerBase
+public class OrgLimitController(IOrgLimitRepository orgLimitRepository) : ControllerBase
 {
-    private readonly IOrgLimitRepository _orgLimitRepository;
-    public OrgLimitController(IOrgLimitRepository orgLimitRepository)
-    {
-        _orgLimitRepository = orgLimitRepository;
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetAll(CancellationToken token)
     {
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var orgLimits = await _orgLimitRepository.GetAllAsync(token);                                 
+        var orgLimits = await orgLimitRepository.GetAllAsync(token);                                 
         var result = orgLimits.Select(x => x.ToOrgLimitDto());
         return Ok(result);
     }
@@ -33,7 +26,7 @@ public class OrgLimitController : ControllerBase
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var orgLimit = await _orgLimitRepository.GetByIdAsync(id, token);
+        var orgLimit = await orgLimitRepository.GetByIdAsync(id, token);
         
         if(orgLimit is null)
             return NotFound("Organization count not found");
@@ -48,7 +41,7 @@ public class OrgLimitController : ControllerBase
             return BadRequest(ModelState);
 
         var orgLimitModel = createOrgLimitDto.ToCreateFromOrgLimitDto(orgId);
-        var orgLimit = await _orgLimitRepository.CreateAsync(orgLimitModel, token);
+        var orgLimit = await orgLimitRepository.CreateAsync(orgLimitModel, token);
         
         if(orgLimit is null)
             return BadRequest("Organization count could not be created");
@@ -62,7 +55,7 @@ public class OrgLimitController : ControllerBase
             return BadRequest(ModelState);
 
         var orgLimit = updateOrgLimitDto.ToUpdateFromOrgLimitDto();
-        var result = await _orgLimitRepository.UpdateAsync(id, orgLimit, token);
+        var result = await orgLimitRepository.UpdateAsync(id, orgLimit, token);
         
         if(result is null)
             return NotFound("Organization count not found");
@@ -76,7 +69,7 @@ public class OrgLimitController : ControllerBase
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var result = await _orgLimitRepository.DeleteAsync(id, token);
+        var result = await orgLimitRepository.DeleteAsync(id, token);
         if(result is null)
             return NotFound("Organization count not found");
         

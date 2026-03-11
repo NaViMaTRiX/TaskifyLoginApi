@@ -1,8 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-
-namespace WebApiTaskify.Dtos.Board;
-
-using System.ComponentModel.DataAnnotations;
+﻿namespace TaskifyApi.Domain.Dtos.Board;
 
 public class UpdateBoardDto
 {

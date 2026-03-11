@@ -9,56 +9,99 @@ public class CardRepository(AppDbContext context) : ICardRepository
 {
     public async Task<List<Cards>> GetAllAsync(CancellationToken token)
     {
-        return await context.Card.AsNoTracking().ToListAsync(token);
+        var cards = await context.Card.AsNoTracking().ToListAsync(token);
+        
+        if (cards is null)
+            throw new ArgumentException($"{nameof(cards)} does not exist, ID : {cards}");
+        
+        return cards;
     }
 
-    public async Task<Cards?> GetByIdAsync(Guid id, CancellationToken token)
+    public async Task<List<Cards>> GetAllByBoardAsync(Guid boardId, CancellationToken token)
     {
-        return await context.Card
+        if(!await context.Board.AnyAsync(x => x.Id == boardId, token))
+            throw new ArgumentNullException($"{nameof(boardId)} does not exist, Id: {boardId}");
+        
+        var cards = await context.Card.Where(x => x.List!.BoardId == boardId)
             .AsNoTracking()
-            .SingleOrDefaultAsync(x => x.Id == id, token);
+            .ToListAsync(token);
+        
+        if (cards is null)
+            throw new ArgumentException($"{nameof(cards)} does not exist, Id : {cards}");
+        return cards;
     }
 
-    public async Task<Cards?> CreateAsync(Cards cardModel, CancellationToken token)
+    public async Task<List<Cards>> GetAllByListAsync(Guid listId, CancellationToken token)
     {
+        if(!await context.List.AnyAsync(x => x.Id == listId, token))
+            throw new ArgumentNullException($"{nameof(listId)} does not exist, Id: {listId}");
+        
+        var cards = await context.Card.Where(x => x.ListId == listId)
+            .AsNoTracking()
+            .ToListAsync(token);
+        
+        if(cards is null)
+            throw new ArgumentNullException($"{nameof(listId)} does not exist, Id: {listId}");
+
+        return cards;
+    }
+
+    public async Task<Cards?> GetByIdAsync(Guid cardId, CancellationToken token)
+    {
+        var cards = await context.Card
+            .AsNoTracking()
+            .SingleOrDefaultAsync(x => x.Id == cardId, token);
+        
+        if(cards is null)
+            throw new ArgumentNullException($"{nameof(cards)} does not exist, Id: {cardId}");
+        
+        return cards;
+    }
+
+    public async Task<Cards?> CreateAsync(Cards cardModel, Guid listId, CancellationToken token)
+    {
+        if(!await context.List.Where(x => x.Id == listId).AnyAsync(token))
+            throw new ArgumentNullException($"{nameof(cardModel.List)} does not exist, Id: {cardModel.ListId}");
+        
         await context.Card.AddAsync(cardModel, token);
         await context.SaveChangesAsync(token);
         return cardModel;
     }
 
-    public async Task<Cards?> UpdateAsync(Guid id, Cards cardModel, CancellationToken token)
+    public async Task<Cards?> UpdateAsync(Guid cardId, Cards cardModel, CancellationToken token)
     {
-        var checkCard = await GetByIdAsync(id, token);
+        var checkCard = await GetByIdAsync(cardId, token);
+        
         if(checkCard is null)
-            return null;
+            throw new ArgumentNullException($"{nameof(checkCard)} does not exist, Id: {cardId}");
         
         checkCard.Title = cardModel.Title;
         checkCard.Description = cardModel.Description;
-        checkCard.Order = cardModel.Order;
+        checkCard.Position = cardModel.Position;
         checkCard.Timer = cardModel.Timer;
         checkCard.TimeStart = cardModel.TimeStart;
         checkCard.TimeEnd = cardModel.TimeEnd;
-        checkCard.Ready = cardModel.Ready;
+        checkCard.Completed = cardModel.Completed;
         checkCard.LastModifyTime = cardModel.LastModifyTime;
         
         await context.SaveChangesAsync(token);
         return checkCard;
     }
 
-    public async Task<Cards?> DeleteAsync(Guid id, CancellationToken token)
+    public async Task<Cards?> DeleteAsync(Guid cardId, CancellationToken token)
     {
-        var checkCard = await GetByIdAsync(id, token);
+        var checkCard = await GetByIdAsync(cardId, token);
         
         if(checkCard is null)
-            return null;
+            throw new ArgumentNullException($"{nameof(checkCard)} does not exist, Id: {cardId}");
         
         context.Card.Remove(checkCard);
         await context.SaveChangesAsync(token);
         return checkCard;
     }
 
-    public  Task<bool> ExistAsync(Guid id, CancellationToken token)
+    public  Task<bool> ExistAsync(Guid cardId, CancellationToken token)
     {
-        return context.Card.AnyAsync(x=>x.Id == id, token);
+        return context.Card.AnyAsync(x=>x.Id == cardId, token);
     }
 }

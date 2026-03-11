@@ -1,15 +1,32 @@
+using System.Text;
 using Asp.Versioning;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Serilog;
+using TaskifyApi.Api.Middleware;
+using TaskifyApi.Application.DI;
+using TaskifyApi.Application.Validation;
+using TaskifyApi.Application.Validation.Card;
 using TaskifyApi.DAL.Data;
-using TaskifyApi.DAL.Repository;
-using TaskifyApi.Domain.Interface;
+using TaskifyApi.DAL.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+Console.OutputEncoding = Encoding.UTF8;
 
+services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Configuration.AddUserSecrets<Program>();
+
+// 1. Настройка Serilog
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+builder.Host.UseSerilog();
+
+services.AddProblemDetails();
 services.AddControllers();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
-builder.Configuration.AddUserSecrets<Program>();
 
 services.AddApiVersioning(options =>
     {
@@ -23,27 +40,21 @@ services.AddApiVersioning(options =>
         options.SubstituteApiVersionInUrl = true;
     });
 
-
-services.AddDbContextPool<AppDbContext>(options =>
-{
-    AppDbContext.ConfigureOptions(options, builder.Configuration.GetConnectionString(nameof(AppDbContext)));
-});
-
-services.AddScoped<IBoardRepository, BoardRepository>();
-services.AddScoped<IListRepository, ListRepository>();
-services.AddScoped<ICardRepository, CardRepository>();
-services.AddScoped<IOrgLimitRepository, OrgLimitRepository>();
-services.AddScoped<IOrgSubscriptionRepository, OrgSubscriptionRepository>();
-services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+services.AddDataAccessLayer(builder.Configuration);
+services.InitValidation();
 
 var app = builder.Build();
-
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    Log.Information("🚀Application started!!!");
 }
+
+app.UseCorrelation();
+app.UseExceptionHandler();
+app.UseSerilogRequestLogging();
 app.MapControllers();
-app.UseHttpsRedirection();
 app.Run();
+

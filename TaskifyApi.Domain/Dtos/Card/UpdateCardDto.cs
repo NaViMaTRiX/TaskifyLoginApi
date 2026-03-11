@@ -1,14 +1,12 @@
-﻿namespace WebApiTaskify.Dtos.Card;
+﻿namespace TaskifyApi.Domain.Dtos.Card;
 
-using System.ComponentModel.DataAnnotations;
-
-public class UpdateCardDto
+public record UpdateCardDto
 {
-    public string Title { get; set; }
-    public int Order { get; set; }
-    public string Description { get; set; }
-    public bool TimeChecked { get; set; } //хз
-    public bool ReadyChecked { get; set; } //хз
-    public DateTime? TimeStart { get; set; }
-    public DateTime? TimeEnd { get; set; }
+    public string Title { get; init; }
+    public int Order { get; init; }
+    public string Description { get; init; }
+    public bool TimeChecked { get; init; } //хз
+    public bool ReadyChecked { get; init; } //хз
+    public DateTime? TimeStart { get; init; }
+    public DateTime? TimeEnd { get; init; }
 }
